@@ -5,7 +5,8 @@ const CONNECTION_TYPE = {
     BOTH: 2
 };
 
-function GraphNode() {
+function GraphNode(N) {
+    this.n = N;
     this.links = [];
     this.connections = {};
 }

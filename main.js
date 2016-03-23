@@ -17,7 +17,7 @@ window.onload = function () {
     graph.LinkNodes(n3, n1, false, false);
     graph.LinkNodes(n3, n5, false, false);
     graph.LinkNodes(n4, n2, false, false);
-    graph.LinkNodes(n4, n4, false, false);
+    //graph.LinkNodes(n4, n4, false, false);
     
     graph.Draw(true);
 };

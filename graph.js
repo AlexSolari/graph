@@ -4,7 +4,7 @@ function Graph() {
 }
 
 Graph.prototype.AddNode = function () {
-    var node = new GraphNode();
+    var node = new GraphNode(this.nodes.length);
     this.nodes.push(node);
     return node;
 }
@@ -61,31 +61,30 @@ Graph.prototype.Draw = function(ignoreDirections) {
     var points = this.nodes.map(x => { return { node: x, X: 500 * Math.random(), Y: 500 * Math.random() } });
     
     for (var index = 0; index < points.length; index++) {
-        var current = points[index];
-        
-        context.beginPath();
-        context.globalCompositeOperation = 'source-over'
-        context.arc(current.X, current.Y, 5, 0, 2 * Math.PI);
-        context.fill();
-        context.closePath();
-        
-        context.fillText((index + 1).toString(), current.X + 10, current.Y - 10);
-        
-        var connected = current.node.GetConnectedNodes(ignoreDirections);
-        
-        connected.forEach(node => {
-            var target = points.find(x => x.node == node);
+            var current = points[index];
             
-            if(target)
-            {
-                context.beginPath();
-                context.moveTo(current.X, current.Y);
-                context.lineTo(target.X, target.Y);
-                context.stroke();
-                context.closePath();
-            }
-        });
-    
+            context.beginPath();
+            context.globalCompositeOperation = 'source-over'
+            context.arc(current.X, current.Y, 5, 0, 2 * Math.PI);
+            context.fill();
+            context.closePath();
+            
+            context.fillText((index + 1).toString(), current.X + 10, current.Y - 10);
+            
+            var connected = current.node.GetConnectedNodes(ignoreDirections);
+            
+            connected.forEach(node => {
+                var target = points.find(x => x.node == node);
+                
+                if(target)
+                {
+                    context.beginPath();
+                    context.moveTo(current.X, current.Y);
+                    context.lineTo(target.X, target.Y);
+                    context.stroke();
+                    context.closePath();
+                }
+            });
     }
 
 }
@@ -126,4 +125,62 @@ Graph.prototype.LogIncindentMatrix = function () {
         }
         console.log(str);
     }
+}
+
+Graph.prototype.DFS = function() {
+    var path = [];
+    
+    function Wrapper(node) {
+        this.node = node;
+        this.visited = false;
+    }
+    
+    function find(all, current, history) {
+        if (!current)
+            return;
+        if (!current.visited) {
+            path.push(current.node.n+1);
+            current.visited = true;
+            history.push(current);
+        }
+        var linkedNodes = current.node.links;
+        var linkedWrapped = all.filter(x => linkedNodes.find(z => z == x.node));
+        var next;
+        
+        if(linkedWrapped.length == 0 || linkedWrapped.filter(x => !x.visited).length == 0)
+        {
+            function isHaveUnvisitedLinked()
+            {
+                if (!history.last())
+                    return false;
+                    
+                var last = all.find(x => x == history.last());
+                var linked = last.node.links;
+                
+                return  all.filter(x=>linked.find(z => z == x.node)).filter(x=>!x.visited).length > 0
+            }
+            
+            while(history.length > 0 && !isHaveUnvisitedLinked())
+            {
+                history.pop();
+            }
+            if (history.length > 0)
+            {
+                next = history.last();
+            }
+            else
+                return path;
+        } else
+        {
+            next = linkedWrapped.filter(x => !x.visited).first();
+        }
+ 
+        return find(all, next, history);
+    }
+    
+    var history = [];
+    var nodes = this.nodes.map(x => new Wrapper(x));
+    var first = nodes.first();
+    
+    return find(nodes, first, history);
 }
