@@ -139,7 +139,6 @@ Graph.prototype.DFS = function() {
         if (!current)
             return;
         if (!current.visited) {
-            path.push(current.node.n+1);
             current.visited = true;
             history.push(current);
         }
@@ -167,15 +166,37 @@ Graph.prototype.DFS = function() {
             if (history.length > 0)
             {
                 next = history.last();
+                path.push(current.node.n+1 + "->" + (next.node.n+1));
             }
-            else
+            else{
                 return path;
+            }
         } else
         {
             next = linkedWrapped.filter(x => !x.visited).first();
+            path.push(current.node.n+1 + "->" + (next.node.n+1));
         }
  
         return find(all, next, history);
+    }
+    
+    var history = [];
+    var nodes = this.nodes.map(x => new Wrapper(x));
+    var first = nodes.first();
+    
+    return find(nodes, first, history);
+}
+
+Graph.prototype.WFS = function () {
+    var path = [];
+    
+    function Wrapper(node) {
+        this.node = node;
+        this.visited = false;
+    }
+    
+    function find(all, current, history) {
+        
     }
     
     var history = [];
