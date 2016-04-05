@@ -138,6 +138,7 @@ Graph.prototype.DFS = function() {
     function find(all, current, history) {
         if (!current)
             return;
+        console.log("now in "+(current.node.n+1));
         if (!current.visited) {
             current.visited = true;
             history.push(current);
@@ -161,12 +162,18 @@ Graph.prototype.DFS = function() {
             
             while(history.length > 0 && !isHaveUnvisitedLinked())
             {
+                var p1 = history.last();
                 history.pop();
+                var p2 = history.last();
+                if (p2){
+                    path.push(p1.node.n+1 + "->" + (p2.node.n+1));
+                    console.log("back to "+(p2.node.n+1));
+                }
+                    
             }
             if (history.length > 0)
             {
                 next = history.last();
-                path.push(current.node.n+1 + "->" + (next.node.n+1));
             }
             else{
                 return path;
@@ -188,7 +195,7 @@ Graph.prototype.DFS = function() {
 }
 
 Graph.prototype.WFS = function () {
-    var path = [];
+    var queue = [];
     
     function Wrapper(node) {
         this.node = node;
@@ -196,12 +203,30 @@ Graph.prototype.WFS = function () {
     }
     
     function find(all, current, history) {
+        console.log("now in "+(current.node.n+1));
+        current.visited = true;
+        history.push(current.node.n+1);
         
+        var linkedNodes = current.node.links;
+        var linkedWrapped = all.filter(x => linkedNodes.find(z => z == x.node));
+        
+        linkedWrapped.forEach(function(wrapper){
+            console.log("lookingup for "+(wrapper.node.n+1));
+            if (history.indexOf(wrapper.node.n+1) < 0 && queue.indexOf(wrapper) < 0){
+                console.log("queued "+(wrapper.node.n+1));
+                queue.push(wrapper);
+            }
+        });
     }
     
     var history = [];
     var nodes = this.nodes.map(x => new Wrapper(x));
-    var first = nodes.first();
+    queue.push(nodes.first());
     
-    return find(nodes, first, history);
+    while (queue.length > 0)
+    {
+        find(nodes, queue.dequeue(), history);
+    }
+    
+    return history;
 }
