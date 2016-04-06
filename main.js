@@ -12,19 +12,18 @@ window.onload = function () {
     var n7 = graph.AddNode();    
     var n8 = graph.AddNode();
 
-    graph.LinkNodes(n1, n4, false, false);
-    graph.LinkNodes(n4, n3, false, false);
-    graph.LinkNodes(n2, n3, false, false);
-    graph.LinkNodes(n5, n2, false, false);
-    graph.LinkNodes(n5, n1, false, false);
-    graph.LinkNodes(n3, n1, false, false);
-    graph.LinkNodes(n3, n5, false, false);
-    graph.LinkNodes(n4, n2, false, false);
-    graph.LinkNodes(n1, n7, false, false);
-    graph.LinkNodes(n8, n6, false, false);
-    graph.LinkNodes(n5, n6, false, false);
-    graph.LinkNodes(n8, n2, false, false);
-    //graph.LinkNodes(n4, n4, false, false);
+    graph.LinkNodes(n1, n4, Graph.Connection.Simple);
+    graph.LinkNodes(n4, n3, Graph.Connection.Default);
+    graph.LinkNodes(n2, n3, Graph.Connection.Simple);
+    graph.LinkNodes(n5, n2, Graph.Connection.Simple);
+    graph.LinkNodes(n5, n1, Graph.Connection.Simple);
+    graph.LinkNodes(n3, n1, Graph.Connection.Default);
+    graph.LinkNodes(n3, n5, Graph.Connection.Simple);
+    graph.LinkNodes(n4, n2, Graph.Connection.Simple);
+    graph.LinkNodes(n1, n7, Graph.Connection.Simple);
+    graph.LinkNodes(n8, n6, Graph.Connection.Default);
+    graph.LinkNodes(n5, n6, Graph.Connection.Simple);
+    graph.LinkNodes(n8, n2, Graph.Connection.Simple);
     
     graph.Draw(true);
 };
