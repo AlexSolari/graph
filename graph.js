@@ -127,7 +127,7 @@ Graph.prototype.LogIncindentMatrix = function () {
     }
 }
 
-Graph.prototype.DFS = function() {
+Graph.prototype.DFS = function(startingNode) {
     var path = [];
     
     function Wrapper(node) {
@@ -155,9 +155,13 @@ Graph.prototype.DFS = function() {
                     return false;
                     
                 var last = all.find(x => x == history.last());
+                
+                if (!last)
+                    return false;
+                
                 var linked = last.node.links;
                 
-                return  all.filter(x=>linked.find(z => z == x.node)).filter(x=>!x.visited).length > 0
+                return all.filter(x=>linked.find(z => z == x.node)).filter(x=>!x.visited).length > 0
             }
             
             while(history.length > 0 && !isHaveUnvisitedLinked())
@@ -189,12 +193,12 @@ Graph.prototype.DFS = function() {
     
     var history = [];
     var nodes = this.nodes.map(x => new Wrapper(x));
-    var first = nodes.first();
+    var first = ( (startingNode) ? new Wrapper(startingNode) : nodes.first() );
     
     return find(nodes, first, history);
 }
 
-Graph.prototype.WFS = function () {
+Graph.prototype.WFS = function (startingNode) {
     var queue = [];
     
     function Wrapper(node) {
@@ -221,7 +225,7 @@ Graph.prototype.WFS = function () {
     
     var history = [];
     var nodes = this.nodes.map(x => new Wrapper(x));
-    queue.push(nodes.first());
+    queue.push( (startingNode) ? new Wrapper(startingNode) : nodes.first() );
     
     while (queue.length > 0)
     {
