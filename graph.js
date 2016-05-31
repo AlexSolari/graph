@@ -15,7 +15,7 @@ Graph.prototype.LinkNodes = function name(parent, child, type) {
         parent.Link(child, CONNECTION_TYPE.SIMPLE);
         child.Link(parent, CONNECTION_TYPE.SIMPLE);    
     }
-    else if (type = Graph.Connection.Both)
+    else if (type == Graph.Connection.Both)
     {
         parent.Link(child, CONNECTION_TYPE.BOTH);
         child.Link(parent, CONNECTION_TYPE.BOTH);
@@ -100,7 +100,7 @@ Graph.prototype.GetIncindentMatrix = function() {
             {
                 value = "a"
             }
-            else if (this.sides[index2].parent == this.nodes[index] && this.sides[index2].parent.connections[this.nodes[index]] != CONNECTION_TYPE.BOTH)
+            else if (this.sides[index2].parent == this.nodes[index] && this.sides[index2].parent.connections[this.nodes[index].n] != CONNECTION_TYPE.BOTH)
             {
                 value = "-1";
             }
@@ -143,7 +143,7 @@ Graph.prototype.DFS = function(startingNode) {
             current.visited = true;
             history.push(current);
         }
-        var linkedNodes = current.node.links;
+        var linkedNodes = current.node.links.filter(node => current.node.connections[node.n] != CONNECTION_TYPE.IN);
         var linkedWrapped = all.filter(x => linkedNodes.find(z => z == x.node));
         var next;
         
@@ -211,7 +211,7 @@ Graph.prototype.WFS = function (startingNode) {
         current.visited = true;
         history.push(current.node.n+1);
         
-        var linkedNodes = current.node.links;
+        var linkedNodes = current.node.links.filter(node => current.node.connections[node.n] != CONNECTION_TYPE.IN);
         var linkedWrapped = all.filter(x => linkedNodes.find(z => z == x.node));
         
         linkedWrapped.forEach(function(wrapper){
@@ -241,7 +241,7 @@ Graph.Connection = {
     Default: 2
 };
 
-Graph.FromConnectionMatrix = function (matrix, useBothInsteadOfSimple) {
+Graph.FromConnectionMatrix = function (matrix) {
     var numberOfNodes = matrix.length;
     var graph = new Graph();
     var nodes = [];
@@ -252,14 +252,11 @@ Graph.FromConnectionMatrix = function (matrix, useBothInsteadOfSimple) {
     
     for (var x = 0; x < numberOfNodes; x++) {
         for (var y = 0; y < numberOfNodes; y++) {
-             var connectionType = 
-                (useBothInsteadOfSimple) 
-                ? Graph.Connection.Both 
-                : Graph.Connection.Simple;
+            var connectionType = Graph.Connection.Default;
             var parent = nodes[x];
             var child = nodes[y];
         
-            if (matrix[x][y] != matrix[y][x])
+            /*if (matrix[x][y] != matrix[y][x])
             {
                 connectionType = Graph.Connection.Default;
                 if (matrix[y][x] == 1)
@@ -268,9 +265,11 @@ Graph.FromConnectionMatrix = function (matrix, useBothInsteadOfSimple) {
                     parent = child;
                     child = tmp;
                 }
-            }
+            }*/
             
-            if (matrix[y][x] == 1 || matrix[x][y] == 1)
+            if (matrix[y][x] == 1)
+                graph.LinkNodes(child, parent, connectionType);
+            if (matrix[y][x] == 1)
                 graph.LinkNodes(parent, child, connectionType);
         }
     }    

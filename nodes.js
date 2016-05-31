@@ -1,8 +1,8 @@
 const CONNECTION_TYPE = {
-    SIMPLE: -1,
-    IN: 0,
-    OUT: 1,
-    BOTH: 2
+    SIMPLE: "simple",
+    IN: "in",
+    OUT: "out",
+    BOTH: "both"
 };
 
 function GraphNode(N) {
@@ -14,7 +14,7 @@ function GraphNode(N) {
 GraphNode.prototype.Link = function (node, type) {
     if (!this.links.find(x => x == node)) {
         this.links.push(node);
-        this.connections[node] = type;
+        this.connections[node.n] = type;
     }
     return this;
 }
@@ -24,7 +24,7 @@ GraphNode.prototype.IsConnectedTo = function (node, ignoreDirections) {
     var res = !!result;
     if (!ignoreDirections)
     {
-        res = res && this.connections[node] != CONNECTION_TYPE.IN;
+        res = res && this.connections[node.n] != CONNECTION_TYPE.IN;
     }
     return res;
 }
